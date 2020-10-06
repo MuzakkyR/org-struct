@@ -41,6 +41,7 @@ export class ChartNodeComponent implements OnInit, AfterContentInit {
   @Input() empId: any;
   @Input() superior: any;
   @Input() skeleton: boolean = false;
+  @Input() childSkeleton: boolean = false;
   @Output() changeSuperior: EventEmitter<any> = new EventEmitter<any>();
   @Output() changeEmployee: EventEmitter<any> = new EventEmitter<any>();
 
@@ -51,6 +52,7 @@ export class ChartNodeComponent implements OnInit, AfterContentInit {
   newEmployee: any = [];
   mouseRelease: boolean = false;
   toggleLoader: boolean = false;
+  childToggleLoader: boolean = false;
   apiRoot: string;
   picRoot: string =
     "https://doffice.dataon.com/sf6/index.cfm?sfid=sys.sec.getimage&img=52EEAD80B7FDB3B31AFC8737ABFF9A94E1638C7EDB7F3EC97795AEB8198A84908072541E10D90ADEBA6FAEB333BDBC62ADB097CAA1AA60ADAB19C8BACD48178891AC7D05D90DCFA7ADAF72B5A5B47B26B39109826A8CCCBBD75D3EDF51A2436DBF8D43C75AACCD5FFBDF882E86B2959CBE6AB2A0A94970AA6A6B6D&fname=";
@@ -90,7 +92,7 @@ export class ChartNodeComponent implements OnInit, AfterContentInit {
       let res = this.picRoot + url.replace("\\", "%5C");
       return res;
     } else {
-      return this.picCompany; 
+      return this.picCompany;
     }
   }
 
@@ -199,11 +201,8 @@ export class ChartNodeComponent implements OnInit, AfterContentInit {
   }
 
   async selectNode(emp, param = null) {
-    // this.toggleLoader = true;
-
     if (param === "scroll") {
-      let child = document.getElementById("node" + emp.empId).parentElement
-        .parentElement;
+      this.childToggleLoader = true;
       for (let i = 0; i < this.tempEmployee.length; i++) {
         if (emp.empId === this.tempEmployee[i].empId) {
           this.tempEmployee[i].active = true;
@@ -212,6 +211,9 @@ export class ChartNodeComponent implements OnInit, AfterContentInit {
             await this.callAPI(emp.empId, "scroll");
             console.log("mamang1");
           }
+          setTimeout(() => {
+            this.childToggleLoader = false;
+          }, 300);
         } else {
           this.tempEmployee[i].active = false;
           this.tempEmployee[i].showChild = false;
@@ -223,6 +225,8 @@ export class ChartNodeComponent implements OnInit, AfterContentInit {
         }
       }
     } else {
+      this.toggleLoader = true;
+
       let child = document.getElementById("node" + emp.empId).parentElement
         .parentElement;
       for (let i = 0; i < this.employee.length; i++) {
@@ -238,11 +242,10 @@ export class ChartNodeComponent implements OnInit, AfterContentInit {
           child.scrollLeft = this.indexEmp * elSelected.width;
           if (this.employee[i].child.length < 1) {
             await this.callAPI(emp.empId, "select");
-          } else {
-            setTimeout(() => {
-              this.toggleLoader = false;
-            }, 300);
           }
+          setTimeout(() => {
+            this.toggleLoader = false;
+          }, 300);
         } else {
           this.employee[i].active = false;
           this.employee[i].showChild = false;
@@ -298,11 +301,8 @@ export class ChartNodeComponent implements OnInit, AfterContentInit {
           });
           console.log(currentEmp, "slave2");
         }
-        this.changeEmployee.emit(this.employee);
-        setTimeout(() => {
-          this.toggleLoader = false;
-        }, 300);
       }
+      this.changeEmployee.emit(this.employee);
     });
   }
 

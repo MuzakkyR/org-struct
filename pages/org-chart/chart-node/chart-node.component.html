@@ -33,7 +33,7 @@
 
 <!-- supervisor -->
 <ng-container *ngIf="level !== 'super'">
-  <div *ngIf="!skeleton" class="chart-node storm-{{skeleton}}" [ngClass]="{'mobile': isMobile}" fxLayout="column" fxLayoutAlign=" center">
+  <div *ngIf="!skeleton" class="chart-node" [ngClass]="{'mobile': isMobile}" fxLayout="column" fxLayoutAlign=" center">
     <div class="top-line line"></div>
     <div class="node-content" [ngClass]="{'active-node':employee[indexEmp]?.active}" fxLayout="column" fxLayoutAlign=" center" (click)="selectNode(employee[indexEmp])">
       <img fxFlex="none" class="photo" alt="photo" src="{{employee[indexEmp]?.photo}}">
@@ -54,22 +54,22 @@
     </div>
     
     <div class="child-box" (touchend)="toggleTouch()" [@fading] (scroll)="onTouchRelease($event, employee[indexEmp])" 
-     *ngIf="employee[indexEmp]?.child.length > 0 && employee[indexEmp].showChild">
+     *ngIf="employee[indexEmp]?.child.length > 0 && employee[indexEmp].showChild && !childSkeleton">
       <div 	class="children" fxLayout="row" [ngStyle]="{'justify-content':employee[indexEmp]?.child.length === 1 ? 'center' : 'start'}">
         <div class='box-container child'></div>
-        <gdx-chart-node  id="node{{child.empId}}" fxFlex="none" [ngStyle]="{'z-index':child.active ? 99 : 1}" [(employee)]="employee[indexEmp].child" [skeleton]="toggleLoader" [superior]="superior" 
+        <gdx-chart-node  id="node{{child.empId}}" [childSkeleton]="childToggleLoader" fxFlex="none" [ngStyle]="{'z-index':child.active ? 99 : 1}" [(employee)]="employee[indexEmp].child" [skeleton]="toggleLoader" [superior]="superior" 
         [level]="'low'" [indexEmp]="i"
         *ngFor="let child of employee[indexEmp]?.child; index as i"
           class="child" [isMobile]="isMobile"></gdx-chart-node>
         <div class='box-container child'></div>
       </div>
     </div>
-    <!-- <div *ngIf='!skeleton && employee[indexEmp]?.active && employee[indexEmp]?.child.length < 1' class='skeleton-box kunto' fxLayout='column' fxLayoutAlign='start center'>
+    <div *ngIf='childSkeleton' class='skeleton-box' fxLayout='column' fxLayoutAlign='start center'>
       <div class='skeleton-avatar'></div>
       <div class='skeleton-slug'></div>
       <div class='skeleton-slug'></div>
-    </div> -->
-    <div class="empty-box" *ngIf="employee[indexEmp]?.active && employee[indexEmp]?.child.length < 1 && !skeleton">
+    </div>
+    <div class="empty-box" *ngIf="employee[indexEmp]?.active && employee[indexEmp]?.child.length < 1 && !childSkeleton">
     </div>
   </div>                                                                                                                                                                                                         
   <div *ngIf='skeleton' class='skeleton-box' fxLayout='column' fxLayoutAlign='start center'>
