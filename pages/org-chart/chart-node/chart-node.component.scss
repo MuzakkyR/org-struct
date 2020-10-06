@@ -1,0 +1,162 @@
+  .biru{
+    background-color: blue;
+  }
+  .chart-node {
+    width:100%;
+    .photo {
+      $size: 56px;
+      padding: 4px;
+      width: $size;
+      height: $size;
+      border-radius: 200px;
+
+      border: 1px solid lightgrey;
+    }
+    .profile {
+      padding: 4px 8px;
+      width: 100%;
+      overflow: hidden;
+      ion-label{
+        white-space: normal;
+        text-align: center;
+      }
+    }
+
+    .tool {
+      button {
+        $size: 32px;
+        width: $size;
+        height: $size;
+        border-color: lightgrey !important;
+        color: #666;
+      }
+    }
+
+    // decorator
+    $line: 1px solid #aaa;
+    .line {
+      border-right: $line;
+    }
+    .top-line {
+      height: 16px;
+    }
+    .child-box{
+      width: 100vw;
+      overflow: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      transition: all 1s ease;
+    }
+    .empty-box{
+      height: 197px;
+      width: 100vw;
+      background-color: red;
+      visibility: hidden;
+    }
+
+    .intersect-horizontal-box{
+      width: calc((100vw / 3) + 4px);
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: 150px;
+      height: 100%;
+      z-index: 999;
+      pointer-events: none;
+    }
+    .intersect-vertical-box{
+      position:absolute;
+      bottom:200px;
+      left:50%;
+      transform: translateX(-50%);
+      width: 100%;
+      height:10px;
+      background-color: red;
+      z-index: 99;
+      display: none;
+    }
+    .children {
+      .child{
+        scroll-snap-align: start;
+        width: calc(100vw/3);
+        z-index: 3;
+      }
+      .child:not(:first-child):not(:last-child) {
+        border-top: $line;
+      }
+      .child:first-child:not(:last-child) {
+        position: relative;
+        &::before {
+          content: "";
+          position: absolute;
+          border-top: $line;
+          left: 50%;
+          width: 50%;
+        }
+      }
+      .child:last-child:not(:first-child) {
+        position: relative;
+        &::before {
+          content: "";
+          position: absolute;
+          border-top: $line;
+          right: 50%;
+          width: 50%;
+        }
+      }
+    }
+
+    // responsive mobile
+    &.mobile {
+      width:100%;
+      .children {
+        flex-wrap:nowrap;
+        width:fit-content;
+        min-width: 100vw;
+      }
+    }
+
+    .node-content{
+      width: 100%;
+      height: 180px;
+    }
+    .active-node{
+      background-color: green !important;
+    }
+  }
+  .superior{
+    position: relative;
+    background-color: yellow;
+    overflow-y: auto;
+    .node-content{
+      width: calc(100vw/3);
+    }
+  }
+.box-container{
+  pointer-events: none !important;
+  visibility: hidden;
+  z-index: 2 !important;
+  background-color: black;
+  opacity: 0;
+}
+.skeleton-box{
+  width:100%;
+  height:196px;
+  .skeleton-avatar{
+    $size: 56px;
+    padding: 4px;
+    width: $size;
+    height: $size;
+    border-radius: 200px;
+    background-color: #999;
+    margin-top: 16px;
+    margin-bottom: 13px;
+  }
+  .skeleton-slug{
+    width: 70px;
+    height: 10px;
+    background-color: #999;
+    margin-bottom: 4px;
+  }
+}

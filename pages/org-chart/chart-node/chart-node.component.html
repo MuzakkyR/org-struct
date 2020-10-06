@@ -1,0 +1,80 @@
+<!-- superior -->
+<div *ngIf="superior && level === 'super'" class="superior chart-node" [ngClass]="{'mobile': isMobile}" fxLayout="column" fxLayoutAlign=" center">
+	<div class="top-line line"></div>
+	<div class="node-content" fxLayout="column" fxLayoutAlign=" center" (click)="selectNode()">
+		<img fxFlex="none" class="photo" alt="photo" src="{{superior?.photo}}">
+		<div fxFlex="" class="profile" fxLayout="column" fxLayoutAlign=" center">
+      <ion-label>{{superior?.fullName}}</ion-label>
+		</div>
+    <div fxFlex="none" class="tool" fxLayout="row">
+      <button ion-button outline icon-only round disabled>
+        <ion-icon name="swap"></ion-icon>
+      </button>
+
+      <div [hidden]="!showChild" class="bottom-line line"></div>
+
+      <button ion-button outline icon-only round (click)="superior.showChild = !superior.showChild">
+        <ion-icon name="eye"></ion-icon>
+      </button>
+    </div>
+      <div id='intersectHorizontal' class='intersect-horizontal-box'></div>
+	</div>
+  
+	<div class="child-box" (touchend)="toggleTouch()" (scroll)="onTouchRelease($event)" [@fading] 
+  *ngIf="tempArray && superior?.showChild">
+		<div id="child-high" class="children" fxLayout="row" [ngStyle]="{'justify-content':tempArray.length === 1 ? 'center' : 'start'}">
+      <div class='box-container child'></div>
+			<gdx-chart-node id="node{{child.empId}}" [skeleton]="toggleLoader" [ngStyle]="{'z-index':child.active ? 99 : 1}" fxFlex="33.34%" [superior]="superior" [(employee)]="tempArray" [indexEmp]="i" [level]="'high'" *ngFor="let child of tempArray; index as i" class="child" [isMobile]="isMobile"></gdx-chart-node>
+      <div class='box-container child'></div>
+		</div>
+	</div>
+  <div id='intersectVertical' class='intersect-vertical-box'> </div>
+</div>
+
+<!-- supervisor -->
+<ng-container *ngIf="level !== 'super'">
+  <div *ngIf="!skeleton" class="chart-node storm-{{skeleton}}" [ngClass]="{'mobile': isMobile}" fxLayout="column" fxLayoutAlign=" center">
+    <div class="top-line line"></div>
+    <div class="node-content" [ngClass]="{'active-node':employee[indexEmp]?.active}" fxLayout="column" fxLayoutAlign=" center" (click)="selectNode(employee[indexEmp])">
+      <img fxFlex="none" class="photo" alt="photo" src="{{employee[indexEmp]?.photo}}">
+      <div fxFlex="" class="profile" fxLayout="column" fxLayoutAlign=" center">
+        <ion-label>{{employee[indexEmp]?.fullName}}</ion-label>
+      </div>
+      <div fxFlex="none" class="tool" fxLayout="row">
+        <button ion-button outline icon-only round disabled>
+          <ion-icon name="swap"></ion-icon>
+        </button>
+
+        <div [hidden]="!showChild" class="bottom-line line"></div>
+
+        <button ion-button outline icon-only round (click)="employee[indexEmp].showChild = !employee[indexEmp].showChild">
+          <ion-icon name="eye"></ion-icon>
+        </button>
+      </div>
+    </div>
+    
+    <div class="child-box" (touchend)="toggleTouch()" [@fading] (scroll)="onTouchRelease($event, employee[indexEmp])" 
+     *ngIf="employee[indexEmp]?.child.length > 0 && employee[indexEmp].showChild">
+      <div 	class="children" fxLayout="row" [ngStyle]="{'justify-content':employee[indexEmp]?.child.length === 1 ? 'center' : 'start'}">
+        <div class='box-container child'></div>
+        <gdx-chart-node  id="node{{child.empId}}" fxFlex="none" [ngStyle]="{'z-index':child.active ? 99 : 1}" [(employee)]="employee[indexEmp].child" [skeleton]="toggleLoader" [superior]="superior" 
+        [level]="'low'" [indexEmp]="i"
+        *ngFor="let child of employee[indexEmp]?.child; index as i"
+          class="child" [isMobile]="isMobile"></gdx-chart-node>
+        <div class='box-container child'></div>
+      </div>
+    </div>
+    <!-- <div *ngIf='!skeleton && employee[indexEmp]?.active && employee[indexEmp]?.child.length < 1' class='skeleton-box kunto' fxLayout='column' fxLayoutAlign='start center'>
+      <div class='skeleton-avatar'></div>
+      <div class='skeleton-slug'></div>
+      <div class='skeleton-slug'></div>
+    </div> -->
+    <div class="empty-box" *ngIf="employee[indexEmp]?.active && employee[indexEmp]?.child.length < 1 && !skeleton">
+    </div>
+  </div>                                                                                                                                                                                                         
+  <div *ngIf='skeleton' class='skeleton-box' fxLayout='column' fxLayoutAlign='start center'>
+    <div class='skeleton-avatar'></div>
+    <div class='skeleton-slug'></div>
+    <div class='skeleton-slug'></div>
+  </div>
+</ng-container>

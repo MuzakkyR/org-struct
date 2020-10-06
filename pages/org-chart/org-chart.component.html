@@ -1,0 +1,14 @@
+<p>
+org-chart works!
+</p>
+
+<div fxLayout="column" fxLayoutAlign="center center">
+  <h3 class="mode-name">{{isMobile? 'Mobile Mode' : 'Desktop Mode'}}</h3>
+  <button class="btn-switch" ion-button outline (click)="toggleMode()">Switch to {{isMobile? 'Desktop' : 'Mobile'}} mode</button>
+</div>
+
+<button (click)="checkRect()">check rect</button>
+
+<div class="org-chart"  [ngClass]="{'mobile': isMobile}" fxLayoutAlign="center">
+  <gdx-chart-node id='root-chart' [empId]="empId" [isMobile]="isMobile"></gdx-chart-node>
+</div>
