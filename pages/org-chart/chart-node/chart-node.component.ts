@@ -90,7 +90,7 @@ export class ChartNodeComponent implements OnInit, AfterContentInit {
       let res = this.picRoot + url.replace("\\", "%5C");
       return res;
     } else {
-      return this.picCompany;
+      return this.picCompany; 
     }
   }
 
