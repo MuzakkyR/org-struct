@@ -60,6 +60,7 @@ export class ChartNodeComponent implements OnInit, AfterContentInit {
     "https://doffice.dataon.com/sf6lib/getimage.cfm?&nosquare=true&img=52EEAD80B7FDB3B31AFC8737ABFF9A94E1638C7EDB7F3EC97795AEB8198A84908072541E10D90ADEBA6FAEB333BDBC62ADB097CAA1AA60ADAB19C8BACD48178891AC7D05D90DCFA7ADAF72B5A5B47B26B39109826A8CCCBBD75D3EDF57A05E42AE8B55DF5AB8805DFDD9E93F86AE9096BC7FAFA6A82911B66A686928&fname=company_logo_cid133.png";
 
   tempEmployee: any;
+  root:any = "https://apidoffice.dataon.com/v2/sunfish/getOrgStruct?empId=";
 
   constructor(public http: HttpClient) {}
 
@@ -105,18 +106,6 @@ export class ChartNodeComponent implements OnInit, AfterContentInit {
       if (this.employee.directsup.length > 0) {
         for (let i = 0; i < this.employee.directsup.length; i++) {
           let photo = this.handlePhoto(this.employee.directsup[i].photo);
-          if (i === 1) {
-            // biar yang center jadi array urutan 2 di array yg baru
-            this.tempArray.push({
-              fullName: this.employee.center.fullName,
-              photo: this.handlePhoto(this.employee.center.photo),
-              empId: this.employee.center.empId,
-              active: true,
-              showChild: true,
-              superior: false,
-              child: this.tempChild
-            });
-          }
           this.tempArray.push({
             fullName: this.employee.directsup[i].fullName,
             empId: this.employee.directsup[i].empId,
@@ -176,8 +165,7 @@ export class ChartNodeComponent implements OnInit, AfterContentInit {
       "Authorization",
       "SFGO160186965541305457997611935559"
     );
-    let root = "https://apidoffice.dataon.com/v2/sunfish/getOrgStruct?empId=";
-    let url = root + employeeId;
+    let url = this.root + employeeId;
 
     await this.http.get<any>(url, { headers }).subscribe(result => {
       this.employee = result.data;
@@ -209,7 +197,6 @@ export class ChartNodeComponent implements OnInit, AfterContentInit {
           this.tempEmployee[i].showChild = true;
           if (this.tempEmployee[i].child.length < 1) {
             await this.callAPI(emp.empId, "scroll");
-            console.log("mamang1");
           }
           setTimeout(() => {
             this.childToggleLoader = false;
@@ -220,25 +207,17 @@ export class ChartNodeComponent implements OnInit, AfterContentInit {
           for (let j = 0; j < this.tempEmployee[i].child.length; j++) {
             this.tempEmployee[i].child[j].active = false;
           }
-          // console.log(this.tempEmployee, 'lavigne1')
-          // console.log(this.employee, 'lavigne2')
         }
       }
     } else {
       this.toggleLoader = true;
-
       let child = document.getElementById("node" + emp.empId).parentElement
         .parentElement;
       for (let i = 0; i < this.employee.length; i++) {
         if (emp.empId === this.employee[i].empId) {
           this.employee[i].active = true;
           this.employee[i].showChild = true;
-
-          let elSelected = document
-            .getElementById("node" + emp.empId)
-            .getBoundingClientRect();
-          console.log(elSelected, "mamang2");
-
+          let elSelected = document.getElementById("node" + emp.empId).getBoundingClientRect();
           child.scrollLeft = this.indexEmp * elSelected.width;
           if (this.employee[i].child.length < 1) {
             await this.callAPI(emp.empId, "select");
@@ -258,13 +237,12 @@ export class ChartNodeComponent implements OnInit, AfterContentInit {
     }
   }
 
-  async callAPI(employeeId, param, activeEmp = null) {
+  async callAPI(employeeId, param) {
     let headers = new HttpHeaders().set(
       "Authorization",
       "SFGO160186965541305457997611935559"
     );
-    let root = "https://apidoffice.dataon.com/v2/sunfish/getOrgStruct?empId=";
-    let url = root + employeeId;
+    let url = this.root + employeeId;
 
     await this.http.get<any>(url, { headers }).subscribe(result => {
       this.newEmployee = result.data;
@@ -283,8 +261,6 @@ export class ChartNodeComponent implements OnInit, AfterContentInit {
             child: []
           });
         }
-        this.changeEmployee.emit(this.employee);
-        console.log(this.employee, "slave1");
       } else {
         currentEmp = this.employee.find(elem => elem.empId === employeeId);
 
@@ -299,7 +275,6 @@ export class ChartNodeComponent implements OnInit, AfterContentInit {
             superior: false,
             child: []
           });
-          console.log(currentEmp, "slave2");
         }
       }
       this.changeEmployee.emit(this.employee);
@@ -342,34 +317,11 @@ export class ChartNodeComponent implements OnInit, AfterContentInit {
             .getBoundingClientRect();
           leftItem = Math.floor(itemNode.left);
           rightItem = Math.floor(itemNode.right);
-          let centerNode = document
-            .getElementById("node" + empId)
-            .querySelector(".node-content");
           if (leftItem >= leftIntersect && rightItem <= rightIntersect) {
             this.tempEmployee = this.employee[i].child;
             this.selectNode(this.employee[i].child[j], "scroll");
-            // centerNode.classList.add("active-node");
-            // this.toggleLoader = true;
-            // console.log('nowhere')
-            // this.employee[i].child[j].showChild = true;
-            // this.employee[i].child[j].active = true;
-            // if (this.employee[i].child[j].child.length === 0) {
-            //   this.callAPI(empId, "scroll", this.employee[i].child[j]);
-            // } else {
-            //   setTimeout(() => {
-            //     this.toggleLoader = false;
-            //     console.log("sotin star2");
-            //   }, 300);
-            // }
+            break;
           }
-          //  else {
-          //   this.employee[i].child[j].showChild = false;
-          //   this.employee[i].child[j].active = false;
-          //   for (let k = 0; k < this.employee[i].child[j].child.length; k++) {
-          //     this.employee[i].child[j].child[k].active = false;
-          //   }
-          //   centerNode.classList.remove("active-node");
-          // }
         }
         break;
       }
